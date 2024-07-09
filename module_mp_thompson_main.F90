@@ -4,7 +4,7 @@ module module_mp_thompson_main
 
     use module_mp_thompson_params
     use module_mp_thompson_utils, only: rslf, rsif
-    
+
 #if defined(mpas)
     use mpas_kind_types, only: wp => RKIND, sp => R4KIND, dp => R8KIND
 #elif defined(standalone)
@@ -187,7 +187,7 @@ contains
         logical :: melti, no_micro
         logical, dimension(kts:kte) :: l_qc, l_qi, l_qr, l_qs, l_qg
         logical :: debug_flag
-        character*256 :: mp_debug
+        character(LEN=256) :: mp_debug
         integer :: nu_c, decfl_
 
         !=================================================================================================================
@@ -202,7 +202,7 @@ contains
         rand = 0.0
         decfl_ = 10
         if (present(decfl)) decfl_ = decfl
-        
+
 #if defined(ccpp_default)
         ! Transition value of coefficient matching at crossover from cloud ice to snow
         av_i = av_s * D0s ** (bv_s - bv_i)
@@ -1404,7 +1404,7 @@ contains
                         !                      * prr_gml(k) * 10.0**(-0.5*tempc)
 
                         if (prr_gml(k) .gt. 0.0) then
-                            melt_f = max(0.05, min(prr_gml(k)*dt/rg(k),1.0))
+                            melt_f = max(0.05_dp, min(prr_gml(k)*dt/rg(k),1.0_dp))
                             !..1000 is density water, 50 is lower limit (max ice density is 800)
                             pbg_gml(k) = prr_gml(k) / max(min(melt_f*rho_g(idx_bg(k)),1000.),50.)
                             !-GT        pnr_gml(k) = prr_gml(k)*ng(k)/rg(k)
@@ -1879,7 +1879,7 @@ contains
                     ygra1 = log10(max(1.e-9, rg(k)))
                     zans1 = 3.4 + 2./7.*(ygra1+8.)
                     ! zans1 = max(2., min(zans1, 6.))
-                    N0_exp = max(gonv_min, min(10.0**(zans1), gonv_max))
+                    N0_exp = max(dble(gonv_min), min(dble(10.0)**(zans1), dble(gonv_max)))
                     lam_exp = (n0_exp*am_g(idx_bg(k))*cgg(1,1)/rg(k))**oge1
                     lamg = lam_exp * (cgg(3,1)*ogg2*ogg1)**obmg
                     ng(k) = cgg(2,1)*ogg3*rg(k)*lamg**bm_g / am_g(idx_bg(k))
@@ -2091,7 +2091,7 @@ contains
                             nc(k) = Nt_c_o
                         endif
                     endif
-                endif                   
+                endif
                 qv(k) = max(min_qv, qv1d(k) + DT*qvten(k))
                 temp(k) = t1d(k) + DT*tten(k)
                 rho(k) = RoverRv*pres(k)/(R*temp(k)*(qv(k)+RoverRv))
@@ -3011,7 +3011,7 @@ contains
                 lower_lim_nuc_frac = 0.15  ! catch-all for anything else
             endif
         endif
-        
+
         A = tnccn_act(i-1,j-1,k,l,m)
         B = tnccn_act(i,j-1,k,l,m)
         C = tnccn_act(i,j,k,l,m)
@@ -3188,7 +3188,7 @@ contains
 ! dzl    depth of model layer in meter
 ! wwl    terminal velocity at model layer m/s
 ! rql    dry air density*mixing ratio
-! precip precipitation at surface 
+! precip precipitation at surface
 ! dt     time step
 !
 ! author: hann-ming henry juang <henry.juang@noaa.gov>
@@ -3222,10 +3222,10 @@ contains
       dz(:) = dzl(:)
       ww(:) = wwl(:)
       do k = 1,km
-        if(rql(k).gt.R1) then 
-          qq(k) = rql(k) 
-        else 
-          ww(k) = 0.0 
+        if(rql(k).gt.R1) then
+          qq(k) = rql(k)
+        else
+          ww(k) = 0.0
         endif
         pfsan(k) = 0.0
         net_flx(k) = 0.0
@@ -3236,7 +3236,7 @@ contains
         allold = allold + qq(k)
       enddo
       if(allold.le.0.0) then
-         return 
+         return
       endif
 !
 ! compute interface values
@@ -3411,5 +3411,5 @@ contains
   END SUBROUTINE semi_lagrange_sedim
 
   !------------------
-  
+
 end module module_mp_thompson_main
