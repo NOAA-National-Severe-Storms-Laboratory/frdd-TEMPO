@@ -186,7 +186,7 @@ contains
         logical :: melti, no_micro
         logical, dimension(kts:kte) :: l_qc, l_qi, l_qr, l_qs, l_qg
         logical :: debug_flag
-        character*256 :: mp_debug
+        character(LEN=256) :: mp_debug
         integer :: nu_c, decfl_
 
         !=================================================================================================================
@@ -1405,7 +1405,7 @@ contains
                         !                      * prr_gml(k) * 10.0**(-0.5*tempc)
 
                         if (prr_gml(k) .gt. 0.0) then
-                            melt_f = max(0.05, min(prr_gml(k)*dt/rg(k),1.0))
+                            melt_f = max(0.05, min(real(prr_gml(k),wp)*dt/rg(k),1.0))
                             !..1000 is density water, 50 is lower limit (max ice density is 800)
                             pbg_gml(k) = prr_gml(k) / max(min(melt_f*rho_g(idx_bg(k)),1000.),50.)
                             !-GT        pnr_gml(k) = prr_gml(k)*ng(k)/rg(k)
@@ -1880,7 +1880,7 @@ contains
                     ygra1 = log10(max(1.e-9, rg(k)))
                     zans1 = 3.4 + 2./7.*(ygra1+8.)
                     ! zans1 = max(2., min(zans1, 6.))
-                    N0_exp = max(gonv_min, min(10.0**(zans1), gonv_max))
+                    N0_exp = max(gonv_min, min(10.0**real(zans1,dp), gonv_max))
                     lam_exp = (n0_exp*am_g(idx_bg(k))*cgg(1,1)/rg(k))**oge1
                     lamg = lam_exp * (cgg(3,1)*ogg2*ogg1)**obmg
                     ng(k) = cgg(2,1)*ogg3*rg(k)*lamg**bm_g / am_g(idx_bg(k))
